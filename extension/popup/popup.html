@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Explain Like I'm 5</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header>
+        <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 18h6"/>
+          <path d="M10 21h4"/>
+          <path d="M12 3a6 6 0 0 0-3.6 10.8c.5.4.6.9.6 1.5V16a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 .5-.5v-.7c0-.6.1-1.1.6-1.5A6 6 0 0 0 12 3Z"/>
+        </svg>
+        <h1>Explain Like I'm 5</h1>
+        <svg class="settings-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09A1.65 1.65 0 0 0 15 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/>
+        </svg>
+      </header>
+
+      <div id="usage-panel" class="usage-panel">
+        <span class="label">Usage today</span>
+
+        <div class="usage-row" data-model="gemini">
+          <svg class="usage-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M12 5v14"/>
+            <path d="M5 12h14"/>
+          </svg>
+          <div class="usage-info">
+            <div class="usage-top">
+              <span class="usage-name">Gemini Flash</span>
+              <span class="usage-count" id="usage-count-gemini">–</span>
+            </div>
+            <div class="usage-bar-track">
+              <div class="usage-bar-fill" id="usage-fill-gemini"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="usage-row" data-model="groq">
+          <svg class="usage-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M13 2 L4 14 L11 14 L10 22 L20 9 L13 9 Z"/>
+          </svg>
+          <div class="usage-info">
+            <div class="usage-top">
+              <span class="usage-name">Llama (Groq)</span>
+              <span class="usage-count" id="usage-count-groq">–</span>
+            </div>
+            <div class="usage-bar-track">
+              <div class="usage-bar-fill" id="usage-fill-groq"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="usage-row" data-model="openrouter">
+          <svg class="usage-icon" viewBox="0 0 24 24" fill="currentColor">
+            <circle cx="12" cy="12" r="7"/>
+          </svg>
+          <div class="usage-info">
+            <div class="usage-top">
+              <span class="usage-name">Gemma 4</span>
+              <span class="usage-count" id="usage-count-openrouter">–</span>
+            </div>
+            <div class="usage-bar-track">
+              <div class="usage-bar-fill" id="usage-fill-openrouter"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- State: waiting for user to highlight something -->
+      <div id="state-idle" class="state">
+        <p class="hint">Highlight some text on the page, then click Explain.</p>
+      </div>
+
+      <!-- State: text is selected, ready to explain -->
+      <div id="state-ready" class="state hidden">
+        <div id="selected-preview">
+          <span class="label">Selected</span>
+          <p id="selected-text"></p>
+          <span id="word-count" class="word-count"></span>
+        </div>
+
+        <div class="controls">
+          <select id="model-select">
+            <option value="gemini">Gemini Flash 2.0 (Google)</option>
+            <option value="groq">Llama 3.3 70B (Groq)</option>
+            <option value="openrouter">Gemma 4 (Google)</option>
+          </select>
+          <button id="explain-btn">Explain</button>
+        </div>
+      </div>
+
+      <!-- State: loading -->
+      <div id="state-loading" class="state hidden">
+        <div class="spinner"></div>
+        <p>Thinking...</p>
+      </div>
+
+      <!-- State: explanation ready -->
+      <div id="state-result" class="state hidden">
+        <div class="result-header">
+          <span class="label">Explanation</span>
+          <button id="simplify-btn" class="secondary">Simplify more</button>
+        </div>
+        <p id="explanation-text"></p>
+        <button id="reset-btn" class="secondary">← Explain something else</button>
+      </div>
+
+      <!-- State: error -->
+      <div id="state-error" class="state hidden">
+        <p id="error-text" class="error-msg"></p>
+        <button id="retry-btn" class="secondary">Try again</button>
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
