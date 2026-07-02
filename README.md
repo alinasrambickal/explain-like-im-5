@@ -1,4 +1,4 @@
-# Explain Like I'm 5 — Chrome Extension
+# Explain Like I'm 5: Chrome Extension
 
 Highlight any text on a webpage → get a simple explanation powered by your choice of AI model.
 
