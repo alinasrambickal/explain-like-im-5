@@ -2,7 +2,7 @@
 
 Highlight any text on a webpage → get a simple explanation powered by your choice of AI model.
 
-![Demo](./docs/demo.gif)
+![Demo](./docs/eli5_demo.gif)
 
 Built this because dense articles, papers, and docs often bury the actual point in jargon. Instead of switching tabs to look something up, you highlight it and get a plain-English explanation right there, with a "simplify more" option if the first pass still isn't clear enough.
 
